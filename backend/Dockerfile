@@ -1,5 +1,5 @@
 # ==============================================================================
-# ResearchMind AI — Backend Production Dockerfile (RHEL 10 / Universal)
+# ResearchMind AI — Backend Production Dockerfile (FastAPI + Gunicorn)
 # ==============================================================================
 
 FROM python:3.11-slim
@@ -11,12 +11,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# Copy requirement files and install pre-compiled binary wheels
+# Copy requirements and install dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt gunicorn uvicorn
+RUN pip install --no-cache-dir -r requirements.txt gunicorn uvicorn
 
-# Copy application code
+# Copy application source code
 COPY . .
 
 # Create persistent storage directories
