@@ -2,25 +2,20 @@
 # ResearchMind AI — Frontend Production Dockerfile (Next.js App Router)
 # ==============================================================================
 
-# --- Stage 1: Dependencies ---
-FROM node:20-alpine AS deps
-WORKDIR /app
-
-COPY package.json package-lock.json ./
-RUN npm ci --include=dev
-
-# --- Stage 2: Builder ---
+# --- Stage 1: Builder ---
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-COPY --from=deps /app/node_modules ./node_modules
+COPY package.json package-lock.json ./
+RUN npm ci
+
 COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN npm run build
+RUN npx next build
 
-# --- Stage 3: Runner ---
+# --- Stage 2: Runner ---
 FROM node:20-alpine AS runner
 WORKDIR /app
 
