@@ -6,8 +6,8 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Copy dependency manifests and install all packages (including next CLI)
-COPY package.json package-lock.json ./
+# Copy package manifest (fresh install on Alpine to generate Linux binaries)
+COPY package.json ./
 RUN npm install
 
 # Copy application source code
@@ -15,8 +15,8 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Compile Next.js production build
-RUN npm run build
+# Build Next.js standalone bundle
+RUN npx next build
 
 # --- Stage 2: Production Lightweight Runner ---
 FROM node:20-alpine AS runner
