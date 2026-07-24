@@ -14,6 +14,7 @@ import QuickActions from "@/components/dashboard/QuickActions";
 import AnalyticsCharts from "@/components/dashboard/AnalyticsCharts";
 import ActivityTimeline from "@/components/dashboard/ActivityTimeline";
 import AIInsights from "@/components/dashboard/AIInsights";
+import { API_BASE_URL, apiFetch } from "@/lib/api";
 
 interface DashboardStats {
   papers: number;
@@ -43,8 +44,8 @@ export default function DashboardPage() {
 
       try {
 
-        const response = await fetch(
-          "http://127.0.0.1:8000/dashboard"
+        const response = await apiFetch(
+          `${API_BASE_URL}/dashboard`
         );
 
         const data = await response.json();
@@ -139,7 +140,7 @@ export default function DashboardPage() {
 
               View All
 
-              <ArrowRight className="w-4 h-4"/>
+              <ArrowRight className="w-4 h-4" />
 
             </Link>
 
@@ -153,7 +154,7 @@ export default function DashboardPage() {
 
             <div className="mx-auto w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center">
 
-              <FileText className="w-12 h-12 text-primary"/>
+              <FileText className="w-12 h-12 text-primary" />
 
             </div>
 
@@ -197,7 +198,7 @@ export default function DashboardPage() {
 
                     <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
 
-                      <FileText className="w-8 h-8 text-primary"/>
+                      <FileText className="w-8 h-8 text-primary" />
 
                     </div>
 

@@ -35,6 +35,21 @@ class Settings(BaseSettings):
     APP_NAME: str = "ResearchMind AI"
     APP_VERSION: str = "1.0.0"
 
+    # =========================
+    # Security
+    # =========================
+    # Set to a strong random string in production (openssl rand -hex 32).
+    # Leave empty string to disable auth in local development.
+    API_SECRET_KEY: str = ""
+
+    # Comma-separated allowed origins for CORS in production.
+    # Example: "https://researchmind.ai,https://www.researchmind.ai"
+    ALLOWED_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000"
+
+    # Auth.js / NextAuth JWT secret — must match AUTH_SECRET in frontend .env.local
+    # Used to verify JWTs issued by the Next.js Auth.js session.
+    AUTH_SECRET: str = ""
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
@@ -43,9 +58,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-
-from app.core.config import settings
-
-settings.MODEL_NAME
-settings.MAX_FILE_SIZE
-settings.CHROMA_DB_PATH

@@ -5,11 +5,12 @@ from app.services.gemini_service import GeminiService
 class SummaryService:
 
     @staticmethod
-    async def generate_summary(filename: str):
+    async def generate_summary(filename: str, user_id: str = "guest"):
 
-        # Retrieve everything from ChromaDB
+        # Retrieve only this user's chunks for this document
         results = collection.get(
-            include=["documents", "metadatas"]
+            include=["documents", "metadatas"],
+            where={"user_id": user_id},
         )
 
         documents = results.get("documents", [])
@@ -17,7 +18,6 @@ class SummaryService:
 
         paper_chunks = []
 
-        # Collect only chunks belonging to this PDF
         for text, meta in zip(documents, metadatas):
 
             if meta.get("filename") == filename:
@@ -28,22 +28,14 @@ class SummaryService:
                     )
                 )
 
-        # No document found
         if len(paper_chunks) == 0:
             return "Document not found."
 
-        # Sort by page number
         paper_chunks.sort(key=lambda x: x[0])
 
-        # Merge all text
-        full_text = "\n\n".join(
-            chunk for _, chunk in paper_chunks
-        )
-
-        # Limit context to avoid token overflow
+        full_text = "\n\n".join(chunk for _, chunk in paper_chunks)
         full_text = full_text[:25000]
 
-        # Ask Gemini to summarize
         summary = await GeminiService.generate_summary(full_text)
 
         return summary

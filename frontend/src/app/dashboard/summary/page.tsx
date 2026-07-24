@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import ExportButton from "@/components/upload/ExportButton";
+import { API_BASE_URL, apiFetch } from "@/lib/api";
 
 interface Document {
   filename: string;
@@ -24,8 +25,8 @@ export default function SummaryPage() {
 
     try {
 
-      const res = await fetch(
-        "http://127.0.0.1:8000/documents"
+      const res = await apiFetch(
+        `${API_BASE_URL}/documents`
       );
 
       const data = await res.json();
@@ -56,8 +57,8 @@ export default function SummaryPage() {
 
     try {
 
-      const res = await fetch(
-        "http://127.0.0.1:8000/summary",
+      const res = await apiFetch(
+        `${API_BASE_URL}/summary`,
         {
           method: "POST",
           headers: {

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { FileText } from "lucide-react";
+import { API_BASE_URL, apiFetch } from "@/lib/api";
 
 interface Document {
   filename: string;
@@ -17,8 +18,8 @@ export default function RecentUploads() {
 
       try {
 
-        const response = await fetch(
-          "http://127.0.0.1:8000/documents"
+        const response = await apiFetch(
+          `${API_BASE_URL}/documents`
         );
 
         const data = await response.json();

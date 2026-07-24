@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { API_BASE_URL, apiFetch } from "@/lib/api";
 
 interface Document {
   filename: string;
@@ -43,8 +44,8 @@ export default function CitationPage() {
 
     try {
 
-      const response = await fetch(
-        "http://127.0.0.1:8000/documents"
+      const response = await apiFetch(
+        `${API_BASE_URL}/documents`
       );
 
       const data = await response.json();
@@ -75,9 +76,9 @@ export default function CitationPage() {
 
     try {
 
-      const response = await fetch(
+      const response = await apiFetch(
 
-        "http://127.0.0.1:8000/citation",
+        `${API_BASE_URL}/citation`,
 
         {
 

@@ -7,20 +7,23 @@ class CitationService:
     @staticmethod
     async def generate(
         filename: str,
+        user_id: str = "guest",
     ):
 
+        # Fetch metadatas scoped to this user
         results = collection.get(
             include=[
                 "documents",
                 "metadatas",
-            ]
+            ],
+            where={"user_id": user_id},
         )
 
         paper_chunks = []
 
         for text, meta in zip(
-            results["documents"],
-            results["metadatas"],
+            results.get("documents", []),
+            results.get("metadatas", []),
         ):
 
             if meta.get("filename") == filename:
@@ -57,7 +60,5 @@ class CitationService:
         citations = await GeminiService.generate_citations(
             full_text
         )
-
-        print(citations)
 
         return citations

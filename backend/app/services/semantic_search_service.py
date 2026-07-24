@@ -7,15 +7,16 @@ from app.services.embedding_service import EmbeddingService
 class SemanticSearchService:
 
     @staticmethod
-    def search(query: str, n_results: int = 10):
+    def search(query: str, n_results: int = 10, user_id: str = "guest"):
 
         # Generate embedding for user query
         query_embedding = EmbeddingService.embeddings.embed_query(query)
 
-        # Search ChromaDB
+        # Search ChromaDB — scoped to this user only
         results = collection.query(
             query_embeddings=[query_embedding],
             n_results=n_results,
+            where={"user_id": user_id},
             include=["metadatas", "documents", "distances"],
         )
 
@@ -29,9 +30,9 @@ class SemanticSearchService:
             }
         )
 
-        metadatas = results["metadatas"][0]
-        documents = results["documents"][0]
-        distances = results["distances"][0]
+        metadatas = results.get("metadatas", [[]])[0]
+        documents = results.get("documents", [[]])[0]
+        distances = results.get("distances", [[]])[0]
 
         for meta, text, distance in zip(
             metadatas,
@@ -39,10 +40,10 @@ class SemanticSearchService:
             distances,
         ):
 
-            filename = meta["filename"]
+            filename = meta.get("filename", "Unknown")
 
             grouped[filename]["filename"] = filename
-            grouped[filename]["pages"].add(meta["page"])
+            grouped[filename]["pages"].add(meta.get("page", 1))
             grouped[filename]["chunks"] += 1
 
             if grouped[filename]["preview"] == "":

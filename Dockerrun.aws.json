@@ -1,0 +1,63 @@
+{
+  "AWSEBDockerrunVersion": "2",
+  "containerDefinitions": [
+    {
+      "name": "researchmind-backend",
+      "image": "researchmind-backend:latest",
+      "essential": true,
+      "memory": 2048,
+      "portMappings": [
+        {
+          "hostPort": 8000,
+          "containerPort": 8000
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "uploads",
+          "containerPath": "/app/app/uploads"
+        },
+        {
+          "sourceVolume": "chromadb",
+          "containerPath": "/app/chroma_db"
+        },
+        {
+          "sourceVolume": "chathistory",
+          "containerPath": "/app/storage/chat_history"
+        }
+      ]
+    },
+    {
+      "name": "researchmind-frontend",
+      "image": "researchmind-frontend:latest",
+      "essential": true,
+      "memory": 1024,
+      "portMappings": [
+        {
+          "hostPort": 80,
+          "containerPort": 3000
+        }
+      ]
+    }
+  ],
+  "volumes": [
+    {
+      "name": "uploads",
+      "host": {
+        "sourcePath": "/var/app/current/backend/app/uploads"
+      }
+    },
+    {
+      "name": "chromadb",
+      "host": {
+        "sourcePath": "/var/app/current/backend/chroma_db"
+      }
+    },
+    {
+      "name": "chathistory",
+      "host": {
+        "sourcePath": "/var/app/current/backend/storage/chat_history"
+      }
+    }
+  ]
+}

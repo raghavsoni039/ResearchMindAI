@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { API_BASE_URL } from "@/lib/api";
 import {
   FileText,
   MessageSquare,
@@ -100,7 +101,7 @@ export default function DocumentCard({
       <div className="grid grid-cols-2 gap-3 mt-6">
 
         <a
-          href={`http://127.0.0.1:8000/documents/view/${encodeURIComponent(filename)}`}
+          href={`${API_BASE_URL}/documents/view/${encodeURIComponent(filename)}`}
           target="_blank"
           rel="noopener noreferrer"
           className="flex justify-center items-center gap-2 rounded-xl bg-primary text-primary-foreground py-3 hover:opacity-90 transition"
@@ -110,7 +111,7 @@ export default function DocumentCard({
         </a>
 
         <a
-          href={`http://127.0.0.1:8000/documents/download/${encodeURIComponent(filename)}`}
+          href={`${API_BASE_URL}/documents/download/${encodeURIComponent(filename)}`}
           className="flex justify-center items-center gap-2 rounded-xl border py-3 hover:bg-muted transition"
         >
           <Download className="w-4 h-4" />

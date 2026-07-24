@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { API_BASE_URL, apiFetch } from "@/lib/api";
 
 interface Document {
   filename: string;
@@ -23,8 +24,8 @@ export default function ConverterPage() {
 
     try {
 
-      const res = await fetch(
-        "http://127.0.0.1:8000/documents"
+      const res = await apiFetch(
+        `${API_BASE_URL}/documents`
       );
 
       const data = await res.json();
@@ -53,9 +54,9 @@ export default function ConverterPage() {
 
     try {
 
-      const response = await fetch(
+      const response = await apiFetch(
 
-        "http://127.0.0.1:8000/convert",
+        `${API_BASE_URL}/convert`,
 
         {
 

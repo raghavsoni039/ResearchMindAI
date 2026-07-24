@@ -15,10 +15,12 @@ from app.utils.json_export import export_json
 class ConverterService:
 
     @staticmethod
-    def convert(filename: str, export_format: str):
+    def convert(filename: str, export_format: str, user_id: str = "guest"):
 
+        # Fetch chunks scoped to this user
         results = collection.get(
-            include=["documents", "metadatas"]
+            include=["documents", "metadatas"],
+            where={"user_id": user_id},
         )
 
         documents = results.get("documents", [])
@@ -57,142 +59,58 @@ class ConverterService:
         # -----------------------
         # Word
         # -----------------------
-
         if export_format == "docx":
-
-            path = os.path.join(
-                output_dir,
-                f"{title}.docx",
-            )
-
-            export_word(
-                title,
-                content,
-                path,
-            )
-
+            path = os.path.join(output_dir, f"{title}.docx")
+            export_word(title, content, path)
             return path
 
         # -----------------------
         # PDF
         # -----------------------
-
         elif export_format == "pdf":
-
-            path = os.path.join(
-                output_dir,
-                f"{title}.pdf",
-            )
-
-            export_pdf(
-                title,
-                content,
-                path,
-            )
-
+            path = os.path.join(output_dir, f"{title}.pdf")
+            export_pdf(title, content, path)
             return path
 
         # -----------------------
         # Text
         # -----------------------
-
         elif export_format == "txt":
-
-            path = os.path.join(
-                output_dir,
-                f"{title}.txt",
-            )
-
-            export_text(
-                title,
-                content,
-                path,
-            )
-
+            path = os.path.join(output_dir, f"{title}.txt")
+            export_text(title, content, path)
             return path
 
         # -----------------------
         # Markdown
         # -----------------------
-
         elif export_format == "md":
-
-            path = os.path.join(
-                output_dir,
-                f"{title}.md",
-            )
-
-            export_markdown(
-                title,
-                content,
-                path,
-            )
-
+            path = os.path.join(output_dir, f"{title}.md")
+            export_markdown(title, content, path)
             return path
 
         # -----------------------
         # HTML
         # -----------------------
-
         elif export_format == "html":
-
-            path = os.path.join(
-                output_dir,
-                f"{title}.html",
-            )
-
-            export_html(
-                title,
-                content,
-                path,
-            )
-
+            path = os.path.join(output_dir, f"{title}.html")
+            export_html(title, content, path)
             return path
 
         # -----------------------
         # CSV
         # -----------------------
-
         elif export_format == "csv":
-
-            path = os.path.join(
-                output_dir,
-                f"{title}.csv",
-            )
-
-            export_csv(
-                title,
-                content,
-                path,
-            )
-
+            path = os.path.join(output_dir, f"{title}.csv")
+            export_csv(title, content, path)
             return path
 
         # -----------------------
         # JSON
         # -----------------------
-
         elif export_format == "json":
-
-            path = os.path.join(
-                output_dir,
-                f"{title}.json",
-            )
-
-            export_json(
-                title,
-                content,
-                path,
-            )
-
+            path = os.path.join(output_dir, f"{title}.json")
+            export_json(title, content, path)
             return path
 
-        # -----------------------
-        # Unsupported
-        # -----------------------
-
         else:
-
-            raise Exception(
-                f"Unsupported format: {export_format}"
-            )
+            raise Exception(f"Unsupported format: {export_format}")

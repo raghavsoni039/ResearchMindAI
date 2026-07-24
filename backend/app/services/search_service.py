@@ -4,9 +4,13 @@ from app.rag.vector_store import collection
 class SearchService:
 
     @staticmethod
-    def search_documents(query: str):
+    def search_documents(query: str, user_id: str = "guest"):
 
-        results = collection.get(include=["metadatas"])
+        # Fetch metadatas scoped to this user
+        results = collection.get(
+            include=["metadatas"],
+            where={"user_id": user_id},
+        )
 
         metadatas = results.get("metadatas", [])
 

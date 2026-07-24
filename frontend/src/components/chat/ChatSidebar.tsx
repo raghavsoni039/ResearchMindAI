@@ -6,6 +6,7 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
+import { API_BASE_URL, apiFetch } from "@/lib/api";
 
 interface Session {
   id: string;
@@ -34,8 +35,8 @@ export default function ChatSidebar({
 
     try {
 
-      const response = await fetch(
-        "http://127.0.0.1:8000/chat/sessions"
+      const response = await apiFetch(
+        `${API_BASE_URL}/chat/sessions`
       );
 
       const data = await response.json();
@@ -58,9 +59,9 @@ export default function ChatSidebar({
 
   async function deleteChat(id: string) {
 
-    await fetch(
+    await apiFetch(
 
-      `http://127.0.0.1:8000/chat/${id}`,
+      `${API_BASE_URL}/chat/${id}`,
 
       {
 

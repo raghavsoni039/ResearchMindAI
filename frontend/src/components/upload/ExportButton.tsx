@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { API_BASE_URL, apiFetch } from "@/lib/api";
 
 interface ExportButtonProps {
   title: string;
@@ -23,7 +24,7 @@ export default function ExportButton({
     try {
       setLoading(true);
 
-      const response = await fetch("http://127.0.0.1:8000/export/", {
+      const response = await apiFetch(`${API_BASE_URL}/export/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

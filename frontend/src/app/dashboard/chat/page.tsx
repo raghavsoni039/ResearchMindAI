@@ -11,6 +11,7 @@ import ChatBubble from "@/components/chat/ChatBubble";
 import ChatInput from "@/components/chat/ChatInput";
 import TypingAnimation from "@/components/chat/TypingAnimation";
 import SourceCard from "@/components/chat/SourceCard";
+import { API_BASE_URL, apiFetch } from "@/lib/api";
 
 interface Source {
   filename: string;
@@ -59,8 +60,8 @@ export default function ChatPage() {
 
     try {
 
-      const response = await fetch(
-        "http://127.0.0.1:8000/chat/new",
+      const response = await apiFetch(
+        `${API_BASE_URL}/chat/new`,
         {
           method: "POST",
         }
@@ -96,8 +97,8 @@ export default function ChatPage() {
 
     try {
 
-      const response = await fetch(
-        `http://127.0.0.1:8000/chat/${id}`
+      const response = await apiFetch(
+        `${API_BASE_URL}/chat/${id}`
       );
 
       const data = await response.json();
@@ -167,9 +168,9 @@ export default function ChatPage() {
 
     try {
 
-      const response = await fetch(
+      const response = await apiFetch(
 
-        "http://127.0.0.1:8000/chat/",
+        `${API_BASE_URL}/chat/`,
 
         {
 

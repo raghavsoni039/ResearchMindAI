@@ -8,17 +8,19 @@ import LibraryFilters from "@/components/library/LibraryFilters";
 import DocumentCard from "@/components/library/DocumentCard";
 import EmptyLibrary from "@/components/library/EmptyLibrary";
 import DeleteDialog from "@/components/library/DeleteDialog";
+import { API_BASE_URL, apiFetch } from "@/lib/api";
 
-interface Document {
+interface DocumentItem {
   filename: string;
   pages: number;
-  chunks?: number;
+  chunks: number;
+  stored_name?: string;
   score?: number;
   preview?: string;
 }
 
 export default function LibraryPage() {
-  const [documents, setDocuments] = useState<Document[]>([]);
+  const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
@@ -41,8 +43,8 @@ export default function LibraryPage() {
     try {
       setLoading(true);
 
-      const response = await fetch(
-        "http://127.0.0.1:8000/documents"
+      const response = await apiFetch(
+        `${API_BASE_URL}/documents`
       );
 
       const data = await response.json();
@@ -64,8 +66,8 @@ export default function LibraryPage() {
     try {
       setLoading(true);
 
-      const response = await fetch(
-        `http://127.0.0.1:8000/documents/semantic-search/${encodeURIComponent(
+      const response = await apiFetch(
+        `${API_BASE_URL}/documents/semantic-search/${encodeURIComponent(
           search
         )}`
       );
@@ -84,8 +86,8 @@ export default function LibraryPage() {
     if (!deleteFile) return;
 
     try {
-      await fetch(
-        `http://127.0.0.1:8000/documents/${encodeURIComponent(deleteFile)}`,
+      await apiFetch(
+        `${API_BASE_URL}/documents/${encodeURIComponent(deleteFile)}`,
         {
           method: "DELETE",
         }

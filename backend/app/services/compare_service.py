@@ -5,13 +5,15 @@ from app.services.gemini_service import GeminiService
 class CompareService:
 
     @staticmethod
-    async def compare(filenames: list[str]):
+    async def compare(filenames: list[str], user_id: str = "guest"):
 
+        # Fetch only this user's documents
         results = collection.get(
             include=[
                 "documents",
                 "metadatas",
-            ]
+            ],
+            where={"user_id": user_id},
         )
 
         docs = []
@@ -34,14 +36,9 @@ class CompareService:
                         )
                     )
 
-            chunks.sort(
-                key=lambda x: x[0]
-            )
+            chunks.sort(key=lambda x: x[0])
 
-            full_text = "\n\n".join(
-                text for _, text in chunks
-            )
-
+            full_text = "\n\n".join(text for _, text in chunks)
             full_text = full_text[:12000]
 
             docs.append(
@@ -51,6 +48,4 @@ class CompareService:
                 }
             )
 
-        return await GeminiService.compare_documents(
-            docs
-        )
+        return await GeminiService.compare_documents(docs)

@@ -13,6 +13,7 @@ import {
 } from "docx";
 
 import { saveAs } from "file-saver";
+import { API_BASE_URL, apiFetch } from "@/lib/api";
 interface ResearchDocument {
   filename: string;
   pages: number;
@@ -33,8 +34,8 @@ export default function ComparePage() {
 
     try {
 
-      const response = await fetch(
-        "http://127.0.0.1:8000/documents"
+      const response = await apiFetch(
+        `${API_BASE_URL}/documents`
       );
 
       const data = await response.json();
@@ -88,9 +89,9 @@ export default function ComparePage() {
 
     try {
 
-      const response = await fetch(
+      const response = await apiFetch(
 
-        "http://127.0.0.1:8000/compare",
+        `${API_BASE_URL}/compare`,
 
         {
 

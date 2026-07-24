@@ -3,6 +3,7 @@ import uuid
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
 from app.core.config import settings
+from app.core.logger import logger
 from app.rag.vector_store import collection
 
 
@@ -19,24 +20,20 @@ class EmbeddingService:
         page_chunks: list,
         filename: str,
         stored_name: str,
+        user_id: str = "guest",
     ):
 
-        print("🔥 NEW EMBEDDING SERVICE IS RUNNING 🔥")
-        print("=" * 60)
-        print("EmbeddingService is running")
-        print("Filename:", filename)
-        print("Stored Name:", stored_name)
-        print("=" * 60)
+        logger.info(f"Embedding {len(page_chunks)} chunks for '{filename}' (user={user_id})")
 
         ids = []
 
         # Extract text from each chunk
         texts = [item["text"] for item in page_chunks]
 
-        # Generate embeddings
+        # Generate embeddings via Gemini
         vectors = cls.embeddings.embed_documents(texts)
 
-        # Store in ChromaDB
+        # Store each chunk in ChromaDB with user_id in metadata
         for item, vector in zip(page_chunks, vectors):
 
             chunk_id = str(uuid.uuid4())
@@ -46,10 +43,8 @@ class EmbeddingService:
                 "stored_name": stored_name,
                 "page": item["page"],
                 "document": filename,
+                "user_id": user_id,         # ← per-user isolation
             }
-
-            print("Saving metadata:")
-            print(metadata)
 
             collection.add(
                 ids=[chunk_id],
@@ -60,4 +55,5 @@ class EmbeddingService:
 
             ids.append(chunk_id)
 
+        logger.info(f"Stored {len(ids)} vectors for user={user_id}")
         return ids

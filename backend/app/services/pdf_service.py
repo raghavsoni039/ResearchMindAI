@@ -7,6 +7,7 @@ from fastapi import UploadFile
 
 from app.services.chunk_service import ChunkService
 from app.services.embedding_service import EmbeddingService
+from app.core.logger import logger
 
 UPLOAD_DIR = Path("app/uploads")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
@@ -15,7 +16,7 @@ UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 class PDFService:
 
     @staticmethod
-    async def save_pdf(file: UploadFile):
+    async def save_pdf(file: UploadFile, user_id: str = "guest"):
 
         # Save uploaded PDF
         filename = f"{uuid.uuid4().hex}.pdf"
@@ -50,16 +51,16 @@ class PDFService:
         pdf.close()
 
         # Store embeddings in ChromaDB
-        print("Original filename:", file.filename)
-        print("Stored filename:", filename)
+        logger.info(f"Indexing '{file.filename}' as '{filename}' for user={user_id}")
 
         ids = EmbeddingService.store_document(
             page_chunks=page_chunks,
             filename=file.filename,
             stored_name=filename,
+            user_id=user_id,
         )
 
-        print("Embedding stored successfully")
+        logger.info(f"Stored {len(ids)} embeddings for user={user_id}")
         return {
             "stored_name": filename,
             "pages": page_count,

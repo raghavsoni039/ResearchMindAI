@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from app.rag.vector_store import collection
+from app.core.logger import logger
 
 UPLOAD_DIR = Path("app/uploads")
 
@@ -8,9 +9,13 @@ UPLOAD_DIR = Path("app/uploads")
 class LibraryService:
 
     @staticmethod
-    def get_documents():
+    def get_documents(user_id: str = "guest"):
+        """Return all documents that belong to this user."""
 
-        results = collection.get(include=["metadatas"])
+        results = collection.get(
+            include=["metadatas"],
+            where={"user_id": user_id},
+        )
 
         metadatas = results.get("metadatas", [])
 
@@ -50,9 +55,13 @@ class LibraryService:
         return response
 
     @staticmethod
-    def delete_document(filename: str):
+    def delete_document(filename: str, user_id: str = "guest"):
+        """Delete all chunks and the PDF for this user's document."""
 
-        results = collection.get(include=["metadatas"])
+        results = collection.get(
+            include=["metadatas"],
+            where={"user_id": user_id},
+        )
 
         ids = results["ids"]
         metadatas = results["metadatas"]
@@ -63,12 +72,12 @@ class LibraryService:
         for doc_id, meta in zip(ids, metadatas):
 
             if meta.get("filename") == filename:
-
                 ids_to_delete.append(doc_id)
                 stored_name = meta.get("stored_name")
 
         if ids_to_delete:
             collection.delete(ids=ids_to_delete)
+            logger.info(f"Deleted {len(ids_to_delete)} chunks for '{filename}' (user={user_id})")
 
         if stored_name:
 
@@ -79,13 +88,16 @@ class LibraryService:
 
         return {
             "success": True,
-            "deleted": filename
+            "deleted": filename,
         }
 
     @staticmethod
-    def get_stored_filename(filename: str):
+    def get_stored_filename(filename: str, user_id: str = "guest"):
 
-        results = collection.get(include=["metadatas"])
+        results = collection.get(
+            include=["metadatas"],
+            where={"user_id": user_id},
+        )
 
         metadatas = results.get("metadatas", [])
 
@@ -97,9 +109,9 @@ class LibraryService:
         return None
 
     @staticmethod
-    def get_pdf_path(filename: str):
+    def get_pdf_path(filename: str, user_id: str = "guest"):
 
-        stored_name = LibraryService.get_stored_filename(filename)
+        stored_name = LibraryService.get_stored_filename(filename, user_id)
 
         if not stored_name:
             return None

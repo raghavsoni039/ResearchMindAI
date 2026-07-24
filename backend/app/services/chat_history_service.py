@@ -1,36 +1,47 @@
-import os
 import json
 import uuid
 from pathlib import Path
 
+from app.core.logger import logger
+
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-CHAT_FOLDER = BASE_DIR / "storage" / "chat_history"
-CHAT_FOLDER.mkdir(parents=True, exist_ok=True)
+# Chat history is now stored per-user:  storage/chat_history/{user_id}/{session_id}.json
+CHAT_BASE = BASE_DIR / "storage" / "chat_history"
+CHAT_BASE.mkdir(parents=True, exist_ok=True)
+
+
+def _user_folder(user_id: str) -> Path:
+    """Return (and create if needed) the per-user chat folder."""
+    folder = CHAT_BASE / user_id
+    folder.mkdir(parents=True, exist_ok=True)
+    return folder
 
 
 class ChatHistoryService:
 
     @staticmethod
-    def get_sessions():
+    def get_sessions(user_id: str = "guest"):
 
+        folder = _user_folder(user_id)
         sessions = []
 
-        for file in CHAT_FOLDER.glob("*.json"):
+        for file in folder.glob("*.json"):
 
-            with open(file, "r", encoding="utf-8") as f:
-
-                data = json.load(f)
-
-                sessions.append({
-                    "id": data["id"],
-                    "title": data["title"],
-                })
+            try:
+                with open(file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    sessions.append({
+                        "id": data["id"],
+                        "title": data["title"],
+                    })
+            except Exception as e:
+                logger.warning(f"Skipping corrupt session file {file}: {e}")
 
         return sessions
 
     @staticmethod
-    def create_session():
+    def create_session(user_id: str = "guest"):
 
         session_id = str(uuid.uuid4())
 
@@ -40,26 +51,19 @@ class ChatHistoryService:
             "messages": [],
         }
 
-        path = CHAT_FOLDER / f"{session_id}.json"
+        path = _user_folder(user_id) / f"{session_id}.json"
 
-        print(f"Creating session: {path}")
+        logger.info(f"Creating session {session_id} for user={user_id}")
 
         with open(path, "w", encoding="utf-8") as f:
-            json.dump(
-                data,
-                f,
-                indent=4,
-                ensure_ascii=False,
-            )
+            json.dump(data, f, indent=4, ensure_ascii=False)
 
         return data
 
     @staticmethod
-    def get_session(session_id: str):
+    def get_session(session_id: str, user_id: str = "guest"):
 
-        path = CHAT_FOLDER / f"{session_id}.json"
-
-        print(f"Loading session: {path}")
+        path = _user_folder(user_id) / f"{session_id}.json"
 
         if not path.exists():
             raise Exception("Chat session not found.")
@@ -73,14 +77,13 @@ class ChatHistoryService:
         role: str,
         message: str,
         sources=None,
+        user_id: str = "guest",
     ):
 
         if sources is None:
             sources = []
 
-        path = CHAT_FOLDER / f"{session_id}.json"
-
-        print(f"Saving message -> {path}")
+        path = _user_folder(user_id) / f"{session_id}.json"
 
         if not path.exists():
             raise Exception(f"Chat session not found. ({path})")
@@ -95,20 +98,12 @@ class ChatHistoryService:
         })
 
         with open(path, "w", encoding="utf-8") as f:
-            json.dump(
-                data,
-                f,
-                indent=4,
-                ensure_ascii=False,
-            )
+            json.dump(data, f, indent=4, ensure_ascii=False)
 
     @staticmethod
-    def rename_session(
-        session_id: str,
-        title: str,
-    ):
+    def rename_session(session_id: str, title: str, user_id: str = "guest"):
 
-        path = CHAT_FOLDER / f"{session_id}.json"
+        path = _user_folder(user_id) / f"{session_id}.json"
 
         if not path.exists():
             raise Exception("Chat session not found.")
@@ -119,17 +114,12 @@ class ChatHistoryService:
         data["title"] = title
 
         with open(path, "w", encoding="utf-8") as f:
-            json.dump(
-                data,
-                f,
-                indent=4,
-                ensure_ascii=False,
-            )
+            json.dump(data, f, indent=4, ensure_ascii=False)
 
     @staticmethod
-    def delete_session(session_id: str):
+    def delete_session(session_id: str, user_id: str = "guest"):
 
-        path = CHAT_FOLDER / f"{session_id}.json"
+        path = _user_folder(user_id) / f"{session_id}.json"
 
         if path.exists():
             path.unlink()

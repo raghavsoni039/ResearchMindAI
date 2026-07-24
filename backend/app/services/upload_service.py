@@ -32,6 +32,23 @@ class UploadService:
                 detail="Only PDF files are allowed."
             )
 
+        # Enforce file size BEFORE writing to disk.
+        # seek(0, 2) moves to end-of-file; tell() returns the byte offset.
+        max_bytes = settings.MAX_FILE_SIZE * 1024 * 1024
+
+        file.file.seek(0, 2)
+        size = file.file.tell()
+        file.file.seek(0)  # reset so the file can be read normally afterward
+
+        if size > max_bytes:
+            raise HTTPException(
+                status_code=413,
+                detail=(
+                    f"File too large. Maximum allowed size is "
+                    f"{settings.MAX_FILE_SIZE} MB."
+                ),
+            )
+
     @staticmethod
     async def save_file(file: UploadFile):
 

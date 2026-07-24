@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { API_BASE_URL, apiFetch } from "@/lib/api";
 
 import UploadHero from "@/components/upload/UploadHero";
 import UploadStats from "@/components/upload/UploadStats";
@@ -54,8 +55,8 @@ export default function UploadPage() {
 
     try {
 
-      const response = await fetch(
-        "http://127.0.0.1:8000/documents/upload",
+      const response = await apiFetch(
+        `${API_BASE_URL}/documents/upload`,
         {
           method: "POST",
           body: formData,

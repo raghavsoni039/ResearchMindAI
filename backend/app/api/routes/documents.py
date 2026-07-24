@@ -1,11 +1,13 @@
-from fastapi import APIRouter, File, HTTPException, UploadFile
-from fastapi.responses import FileResponse
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi.responses import FileResponse, JSONResponse
 
 from app.schemas.document import DocumentResponse
 from app.services.document_service import DocumentService
 from app.services.library_service import LibraryService
 from app.services.search_service import SearchService
 from app.services.semantic_search_service import SemanticSearchService
+from app.core.security import get_current_user, sanitize_filename
+from app.core.logger import logger
 
 router = APIRouter(
     prefix="/documents",
@@ -13,112 +15,153 @@ router = APIRouter(
 )
 
 
-# ----------------------------------
-# Upload PDF
-# ----------------------------------
 @router.post("/upload", response_model=DocumentResponse)
-async def upload_document(file: UploadFile = File(...)):
+async def upload_document(
+    file: UploadFile = File(...),
+    user_id: str = Depends(get_current_user),
+):
 
-    result = await DocumentService.upload_document(file)
+    try:
 
-    return DocumentResponse(
-        success=True,
-        filename=result["filename"],
-        stored_name=result["stored_name"],
-        size=result["size"],
-        pages=result["pages"],
-        characters=result["characters"],
-        chunks=result["chunks"],
-        vectors=result["vector_ids"],
-        message="PDF uploaded, indexed and ready for AI."
-    )
+        result = await DocumentService.upload_document(file, user_id=user_id)
+
+        return DocumentResponse(
+            success=True,
+            filename=result["filename"],
+            stored_name=result["stored_name"],
+            size=result["size"],
+            pages=result["pages"],
+            characters=result["characters"],
+            chunks=result["chunks"],
+            vectors=result["vector_ids"],
+            message="PDF uploaded, indexed and ready for AI.",
+        )
+
+    except HTTPException:
+        raise
+
+    except Exception as e:
+
+        logger.error(f"Upload error: {e}", exc_info=True)
+
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "message": "An internal error occurred during upload."},
+        )
 
 
-# ----------------------------------
-# Get All Documents
-# ----------------------------------
 @router.get("")
-async def get_documents():
+async def get_documents(user_id: str = Depends(get_current_user)):
 
-    return {
-        "documents": LibraryService.get_documents()
-    }
-    
-# ----------------------------------
-# Search Document
-# ----------------------------------   
+    try:
+
+        return {"documents": LibraryService.get_documents(user_id=user_id)}
+
+    except Exception as e:
+
+        logger.error(f"Get documents error: {e}", exc_info=True)
+
+        return JSONResponse(
+            status_code=500,
+            content={"message": "An internal error occurred."},
+        )
+
+
 @router.get("/search/{query}")
-async def search_documents(query: str):
+async def search_documents(query: str, user_id: str = Depends(get_current_user)):
 
-    return {
-        "documents": SearchService.search_documents(query)
-    }
+    try:
 
-# ----------------------------------
-# SemanticSearch Document
-# ----------------------------------   
+        return {"documents": SearchService.search_documents(query, user_id=user_id)}
+
+    except Exception as e:
+
+        logger.error(f"Search error: {e}", exc_info=True)
+
+        return JSONResponse(
+            status_code=500,
+            content={"message": "An internal error occurred."},
+        )
+
+
 @router.get("/semantic-search/{query}")
-async def semantic_search(query: str):
+async def semantic_search(query: str, user_id: str = Depends(get_current_user)):
 
-    documents = SemanticSearchService.search(query)
+    try:
 
-    return {
-        "success": True,
-        "documents": documents,
-        "count": len(documents),
-    }
+        documents = SemanticSearchService.search(query, user_id=user_id)
 
-# ----------------------------------
-# Delete Document
-# ----------------------------------
+        return {
+            "success": True,
+            "documents": documents,
+            "count": len(documents),
+        }
+
+    except Exception as e:
+
+        logger.error(f"Semantic search error: {e}", exc_info=True)
+
+        return JSONResponse(
+            status_code=500,
+            content={"message": "An internal error occurred."},
+        )
+
+
 @router.delete("/{filename}")
-async def delete_document(filename: str):
+async def delete_document(
+    filename: str,
+    user_id: str = Depends(get_current_user),
+):
 
-    return LibraryService.delete_document(filename)
+    try:
+
+        safe_name = sanitize_filename(filename)
+        return LibraryService.delete_document(safe_name, user_id=user_id)
+
+    except Exception as e:
+
+        logger.error(f"Delete error: {e}", exc_info=True)
+
+        return JSONResponse(
+            status_code=500,
+            content={"message": "An internal error occurred."},
+        )
 
 
-# ----------------------------------
-# View PDF
-# ----------------------------------
 @router.get("/view/{filename}")
-async def view_document(filename: str):
+async def view_document(
+    filename: str,
+    user_id: str = Depends(get_current_user),
+):
 
-    pdf_path = LibraryService.get_pdf_path(filename)
+    safe_name = sanitize_filename(filename)
+    pdf_path = LibraryService.get_pdf_path(safe_name, user_id=user_id)
 
     if pdf_path is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Document not found."
-        )
+        raise HTTPException(status_code=404, detail="Document not found.")
 
     return FileResponse(
         path=pdf_path,
         media_type="application/pdf",
-        headers={
-            "Content-Disposition": f'inline; filename="{filename}"'
-        }
+        headers={"Content-Disposition": f'inline; filename="{safe_name}"'},
     )
 
 
-# ----------------------------------
-# Download PDF
-# ----------------------------------
 @router.get("/download/{filename}")
-async def download_document(filename: str):
+async def download_document(
+    filename: str,
+    user_id: str = Depends(get_current_user),
+):
 
-    pdf_path = LibraryService.get_pdf_path(filename)
+    safe_name = sanitize_filename(filename)
+    pdf_path = LibraryService.get_pdf_path(safe_name, user_id=user_id)
 
     if pdf_path is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Document not found."
-        )
+        raise HTTPException(status_code=404, detail="Document not found.")
 
     return FileResponse(
         path=pdf_path,
         media_type="application/pdf",
-        filename=filename,
-        headers={
-            "Content-Disposition": f'attachment; filename="{filename}"'
-        }
+        filename=safe_name,
+        headers={"Content-Disposition": f'attachment; filename="{safe_name}"'},
     )

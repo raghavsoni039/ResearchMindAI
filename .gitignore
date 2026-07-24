@@ -3,16 +3,22 @@ backend/venv/
 __pycache__/
 *.pyc
 
-# Environment variables
+# Environment variables — NEVER commit any .env file
 .env
+.env.*
+**/.env
+**/.env.*
 backend/.env
 frontend/.env.local
+frontend/.env.production
 
 # Uploads
 backend/app/uploads/*
+!backend/app/uploads/.gitkeep
 
 # Chroma Database
 backend/chroma_db/
+backend/app/database/
 
 # Logs
 *.log
@@ -26,4 +32,4 @@ frontend/.next/
 
 # OS
 .DS_Store
-Thumbs.db
+Thumbs.db

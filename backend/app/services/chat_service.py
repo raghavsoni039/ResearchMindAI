@@ -9,7 +9,7 @@ from app.services.chat_history_service import ChatHistoryService
 class ChatService:
 
     @staticmethod
-    async def chat(session_id: str, question: str):
+    async def chat(session_id: str, question: str, user_id: str = "guest"):
 
         # -----------------------------
         # Load previous memory
@@ -18,10 +18,10 @@ class ChatService:
         history = MemoryService.get_history(session_id)
 
         # -----------------------------
-        # Retrieve relevant chunks
+        # Retrieve relevant chunks (scoped to this user)
         # -----------------------------
 
-        chunks = RetrievalService.retrieve(question)
+        chunks = RetrievalService.retrieve(question, user_id=user_id)
 
         context = "\n\n".join(
             chunk["text"]
@@ -73,6 +73,7 @@ class ChatService:
             session_id=session_id,
             role="user",
             message=question,
+            user_id=user_id,
         )
 
         ChatHistoryService.save_message(
@@ -80,6 +81,7 @@ class ChatService:
             role="assistant",
             message=answer,
             sources=sources,
+            user_id=user_id,
         )
 
         # -----------------------------
@@ -88,7 +90,7 @@ class ChatService:
 
         try:
 
-            session = ChatHistoryService.get_session(session_id)
+            session = ChatHistoryService.get_session(session_id, user_id)
 
             if session["title"] == "New Chat":
 
@@ -100,6 +102,7 @@ class ChatService:
                 ChatHistoryService.rename_session(
                     session_id,
                     title,
+                    user_id=user_id,
                 )
 
         except Exception:
