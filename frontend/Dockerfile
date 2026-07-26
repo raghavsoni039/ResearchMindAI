@@ -11,7 +11,7 @@ ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
 # Cache package dependencies
 COPY package.json ./
-RUN npm install --prefer-offline --no-audit --no-fund
+RUN npm install --legacy-peer-deps --prefer-offline --no-audit --no-fund
 
 COPY . .
 
