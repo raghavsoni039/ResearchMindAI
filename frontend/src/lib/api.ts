@@ -11,8 +11,21 @@
 
 import { getSession } from "next-auth/react";
 
-export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
+export function getApiBaseUrl(): string {
+  const envUrl = process.env.NEXT_PUBLIC_API_URL;
+  
+  if (envUrl && envUrl !== "http://127.0.0.1:8000" && envUrl !== "http://localhost:8000") {
+    return envUrl.replace(/\/$/, "");
+  }
+
+  if (typeof window !== "undefined") {
+    return `${window.location.protocol}//${window.location.hostname}:8000`;
+  }
+
+  return (envUrl || "http://127.0.0.1:8000").replace(/\/$/, "");
+}
+
+export const API_BASE_URL = getApiBaseUrl();
 
 export async function apiFetch(
   path: string,
@@ -33,12 +46,14 @@ export async function apiFetch(
     if (session?.user?.name) headers["X-User-Name"] = session.user.name;
   }
 
+  const baseUrl = getApiBaseUrl();
   const url = path.startsWith("http://") || path.startsWith("https://")
     ? path
-    : `${API_BASE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
+    : `${baseUrl}${path.startsWith("/") ? "" : "/"}${path}`;
 
   return fetch(url, {
     ...options,
     headers,
   });
 }
+
