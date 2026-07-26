@@ -12,6 +12,7 @@ import {
     HeadingLevel,
 } from "docx";
 
+// @ts-ignore
 import { saveAs } from "file-saver";
 import { API_BASE_URL, apiFetch } from "@/lib/api";
 interface ResearchDocument {

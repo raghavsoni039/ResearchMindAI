@@ -99,8 +99,8 @@ flowchart LR
 
 ```mermaid
 graph TD
-    subgraph FE["🌐 Frontend — Next.js 16"]
-        NX["Next.js 16 + React 19\nTypeScript"]
+    subgraph FE["🌐 Frontend — Next.js 15 / 16"]
+        NX["Next.js 15 + React 19\nTypeScript + NextAuth.js v5"]
         TW["Tailwind CSS v4\nShadcn/UI"]
         FM["Framer Motion\nAnimations"]
         RC["Recharts\nAnalytics"]
@@ -109,6 +109,7 @@ graph TD
 
     subgraph BE["⚡ Backend — FastAPI"]
         FA["FastAPI + Pydantic v2"]
+        SEC["app.core.security\nJWT Auth + Injection Guard"]
         LC["LangChain\nOrchestration"]
         MF["PyMuPDF\nPDF Extraction"]
         CDB2["ChromaDB Client"]
@@ -117,7 +118,7 @@ graph TD
 
     subgraph AI["🤖 AI — Google Gemini"]
         EMB["gemini-embedding-001\n768-dim vectors"]
-        GEN["gemini-3.5-flash\nText Generation"]
+        GEN["gemini-2.5-flash\nText Generation & Synthesis"]
     end
 
     subgraph ST["💾 Storage"]
@@ -126,7 +127,8 @@ graph TD
         CHAT["storage/chat_history/\nJSON Sessions"]
     end
 
-    FE -->|HTTP REST| BE
+    FE -->|HTTP REST + Auth Headers| SEC
+    SEC --> FA
     BE --> AI
     BE --> ST
 ```
@@ -135,41 +137,100 @@ graph TD
 
 ## 4. System Architecture
 
-### High-Level System Map
+### 4.1 High-Level System Architecture (Mermaid Flowchart)
 
 ```mermaid
-graph TD
-    U["👤 User Browser"] -->|"fetch() HTTP REST"| FE
+flowchart TB
+    %% Styling Classes
+    classDef frontend fill:#1e293b,stroke:#3b82f6,stroke-width:2px,color:#f8fafc;
+    classDef security fill:#312e81,stroke:#6366f1,stroke-width:2px,color:#f8fafc;
+    classDef backend fill:#0f172a,stroke:#06b6d4,stroke-width:2px,color:#f8fafc;
+    classDef ai fill:#4c1d95,stroke:#a855f7,stroke-width:2px,color:#f8fafc;
+    classDef db fill:#064e3b,stroke:#10b981,stroke-width:2px,color:#f8fafc;
 
-    subgraph FE["🌐 Next.js 16 — Port 3000"]
-        D["Dashboard"]
-        UP["Upload"]
-        CH["Chat"]
-        CM["Compare"]
-        LB["Library"]
-        CI["Citation"]
-        EX["Export"]
+    subgraph CLIENT ["🌐 USER & FRONTEND LAYER (Next.js 15 + React 19)"]
+        UI["User Dashboard / Client UI"]:::frontend
+        AUTH["NextAuth.js v5 (JWT Session)"]:::frontend
+        COMP["Upload • Chat • Compare • Citations • Export"]:::frontend
+        UI --> AUTH --> COMP
     end
 
-    FE -->|"HTTP REST JSON\nto Port 8000"| ROUTER
-
-    subgraph BE["⚡ FastAPI Backend — Port 8000"]
-        ROUTER["API Router Layer\n/documents /chat /summary\n/compare /citation /convert /dashboard"]
-        SVC["Service Layer\n20 Services"]
-        ROUTER --> SVC
+    subgraph SEC ["🛡️ SECURITY & GATEWAY LAYER (FastAPI Security)"]
+        AUTH_DEP["X-User-Id Header Validation (get_current_user)"]:::security
+        INJ_GUARD["Prompt Injection Filter (Regex Scanner)"]:::security
+        RATE_LIM["SlowAPI Rate Limiter & CORS Guard"]:::security
+        AUTH_DEP --- INJ_GUARD --- RATE_LIM
     end
 
-    SVC --> CDB
-    SVC --> GMN
-
-    subgraph CDB["🗄️ ChromaDB — Local Disk"]
-        COL["Collection: researchmind_documents\ntext chunks + embeddings + metadata"]
+    subgraph CORE ["⚡ BACKEND API & SERVICE LAYER (FastAPI)"]
+        ROUTES["API Routers (/documents, /chat, /compare, /citation)"]:::backend
+        PDF_PROC["PyMuPDF Document Parser & Text Splitter"]:::backend
+        RAG_PIPE["RAG Orchestrator (LangChain)"]:::backend
+        ROUTES --> PDF_PROC --> RAG_PIPE
     end
 
-    subgraph GMN["🤖 Google Gemini API"]
-        EMB2["gemini-embedding-001\ntext → 768-dim vectors"]
-        GFL["gemini-3.5-flash\nanswer generation"]
+    subgraph AI_ENG ["🤖 AI & MODEL ENGINE (Google Gemini)"]
+        EMBED["Google Text Embedding API (768-dim Vectors)"]:::ai
+        GEMINI["Google Gemini 2.5 Flash LLM"]:::ai
+        EMBED <--> GEMINI
     end
+
+    subgraph INFRA ["🗄️ DATABASE & CLOUD INFRASTRUCTURE"]
+        CHROMA[("ChromaDB Vector Store")]:::db
+        JSON_STORE[("Chat History JSON Store")]:::db
+        AWS_EC2["AWS EC2 / Docker Compose / Nginx"]:::db
+        CHROMA --- JSON_STORE --- AWS_EC2
+    end
+
+    %% Connections
+    CLIENT ==>|"HTTPS REST + Auth Tokens"| SEC
+    SEC ==>|"Sanitized Request"| CORE
+    CORE ==>|"Vector Embeddings & Context"| AI_ENG
+    CORE ==>|"Read / Write Vectors & Sessions"| INFRA
+    AI_ENG ==>|"Grounded AI Response"| CORE
+    CORE ==>|"JSON Response + Source Metadata"| CLIENT
+```
+
+### 4.2 Presentation Box Architecture (ASCII / Unicode Text Format)
+
+```text
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                                   RESEARCHMIND AI                                       │
+│                    Modern AI-Powered Research Paper Assistant Architecture                │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+                                             │
+                                             ▼
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│  🌐 FRONTEND LAYER (Next.js 15 + React 19)                                             │
+│  ├── Dashboard UI (Tailwind CSS v4 + Framer Motion)                                      │
+│  ├── Authentication (NextAuth.js v5 with JWT Sessions)                                  │
+│  └── Client Modules: PDF Upload • AI Chat • Paper Comparison • Citations • Exporter     │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+                                             │
+                                             ▼  [ HTTPS REST + X-User-Id Auth Header ]
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│  🛡️ SECURITY & GATEWAY LAYER (FastAPI Security Module)                                  │
+│  ├── Identity Extraction: get_current_user dependency                                   │
+│  ├── Defense Guard: Prompt Injection Regex Scanner & Length Truncation                  │
+│  └── Network Security: SlowAPI Rate Limiting & Dynamic CORS Whitelisting                 │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+                                             │
+                                             ▼  [ Verified & Sanitized Payload ]
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│  ⚡ BACKEND SERVICE LAYER (FastAPI + LangChain)                                         │
+│  ├── API Routers: /documents • /chat • /summary • /compare • /citation • /convert       │
+│  ├── Document Engine: PyMuPDF (fitz) text parsing & Recursive Character Chunking       │
+│  └── RAG Pipeline: Vector Retrieval, Prompt Construction & Context Memory Management    │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+                                      │             │
+                    [ 768-dim Vectors ]│             │ [ Grounded Prompts ]
+                                      ▼             ▼
+┌──────────────────────────────────────────┐   ┌──────────────────────────────────────────┐
+│  🗄️ STORAGE & CLOUD INFRASTRUCTURE       │   │  🤖 AI & LLM ENGINE                      │
+│  ├── ChromaDB Vector Database            │   │  ├── Google Gemini 2.5 Flash (LLM)       │
+│  ├── JSON Persistent Chat History        │   │  └── Google Text Embedding API           │
+│  └── AWS EC2 (Docker Compose + Nginx)    │   └──────────────────────────────────────────┘
+└──────────────────────────────────────────┘
 ```
 
 ### File System Layout
@@ -539,19 +600,16 @@ graph TD
     style S8 fill:#51cf66,color:#fff
 ```
 
-### Security Fix Priority Table
+### Security Hardening & Implementation Status
 
-| Priority | Issue | File to Change |
-|---|---|---|
-| 🔴 Critical | Prompt injection / LLM jailbreak | `gemini_service.py` |
-| 🔴 Critical | No API authentication | All routers + new `security.py` |
-| 🟠 High | File size not enforced | `upload_service.py` |
-| 🟠 High | Error details leaked to client | All route files |
-| 🟠 High | Unbounded memory growth | `memory_service.py` |
-| 🟠 High | Filename injected into prompts | `gemini_service.py`, `compare_service.py` |
-| 🟡 Medium | No rate limiting | `main.py` + AI routes |
-| 🟡 Medium | `.env` commit risk | `.gitignore` + git audit |
-| 🟡 Medium | CORS — never use wildcard | `main.py` |
+| Priority | Security Controls & Defense Mechanisms | File / Module Location | Implementation Status |
+|---|---|---|---|
+| 🟢 Resolved | Prompt Injection Regex Filter & Length Cap | `app/core/security.py` (`detect_injection`, `validate_question`) | ✅ Implemented |
+| 🟢 Resolved | Auth.js JWT User Authentication & `X-User-Id` Header Scoping | `app/core/security.py` (`get_current_user`) | ✅ Implemented |
+| 🟢 Resolved | Filename Sanitization & Path Traversal Guard | `app/core/security.py` (`sanitize_filename`, `sanitize_for_prompt`) | ✅ Implemented |
+| 🟢 Resolved | Environment Isolation (`.env`) & Secret Randomization | `app/core/config.py`, `.gitignore` | ✅ Implemented |
+| 🟢 Resolved | Dynamic CORS Whitelisting & Origin Guard | `app/main.py` (`CORSMiddleware`) | ✅ Implemented |
+| 🟢 Resolved | Rate Limiting & Endpoint DDoS Protection | `app/main.py` (`SlowAPI`) | ✅ Implemented |
 
 ---
 

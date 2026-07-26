@@ -27,10 +27,11 @@ services:
       - backend_chromadb:/app/chroma_db
       - backend_chathistory:/app/storage/chat_history
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
-      interval: 30s
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/')"]
+      interval: 15s
       timeout: 10s
-      retries: 3
+      retries: 5
+      start_period: 40s
 
   # ---------------------------------------------------------------------------
   # Next.js Frontend (App Router + Auth.js)
@@ -44,6 +45,7 @@ services:
     ports:
       - "3000:3000"
     environment:
+      - AUTH_TRUST_HOST=true
       - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
       - AUTH_SECRET=${AUTH_SECRET}
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8000}

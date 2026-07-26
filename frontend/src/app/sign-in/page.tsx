@@ -1,14 +1,14 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Loader2, Mail, Lock, Brain } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { toast } from "sonner";
 
-export default function SignInPage() {
+function SignInContent() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
 
@@ -54,7 +54,6 @@ export default function SignInPage() {
         setLoading(null);
       }
     } catch {
-      // If client-side redirect throws or fails, try standard redirect
       try {
         await signIn(provider, { callbackUrl });
       } catch {
@@ -66,7 +65,6 @@ export default function SignInPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 flex items-center justify-center p-4">
-
       {/* Background blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -left-40 w-80 h-80 bg-indigo-500/20 rounded-full blur-3xl" />
@@ -75,10 +73,8 @@ export default function SignInPage() {
       </div>
 
       <div className="relative w-full max-w-md">
-
         {/* Card */}
         <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl">
-
           {/* Logo */}
           <div className="flex flex-col items-center mb-8">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mb-4 shadow-lg shadow-indigo-500/30">
@@ -128,7 +124,6 @@ export default function SignInPage() {
 
           {/* Credentials Form */}
           <form onSubmit={handleCredentials} className="space-y-4">
-
             <div className="relative">
               <Mail
                 size={16}
@@ -182,17 +177,26 @@ export default function SignInPage() {
                 "Sign in"
               )}
             </button>
-
           </form>
 
           {/* Dev hint */}
           <p className="text-center text-slate-400 text-xs mt-6">
             Dev credentials: <span className="font-mono text-indigo-300">admin@researchmind.ai</span> / <span className="font-mono text-indigo-300">admin123</span>
           </p>
-
         </div>
-
       </div>
     </div>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-white">
+        <Loader2 className="animate-spin" size={32} />
+      </div>
+    }>
+      <SignInContent />
+    </Suspense>
   );
 }

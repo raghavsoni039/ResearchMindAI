@@ -63,6 +63,7 @@ providers.push(
 );
 
 export const authConfig: NextAuthConfig = {
+  trustHost: true,
   providers,
 
   session: {
