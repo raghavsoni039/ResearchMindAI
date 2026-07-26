@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import ExportButton from "@/components/upload/ExportButton";
 import { API_BASE_URL, apiFetch } from "@/lib/api";
@@ -106,13 +107,16 @@ export default function SummaryPage() {
 
       {documents.length === 0 ? (
 
-        <div className="border rounded-lg p-8 text-center">
+        <div className="border rounded-xl p-12 text-center bg-card shadow-sm">
 
-          No research papers found.
+          <p className="text-muted-foreground text-lg mb-4">No research papers found in your library.</p>
 
-          <br />
-
-          Upload a PDF first.
+          <Link
+            href="/dashboard/upload"
+            className="inline-flex items-center justify-center rounded-xl bg-primary text-primary-foreground px-6 py-3 font-medium hover:opacity-90 transition"
+          >
+            Upload a PDF First
+          </Link>
 
         </div>
 

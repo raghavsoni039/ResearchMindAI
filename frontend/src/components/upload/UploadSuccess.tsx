@@ -95,7 +95,7 @@ export default function UploadSuccess({
       <div className="flex flex-wrap gap-4 mt-8">
 
         <Link
-          href="/library"
+          href="/dashboard/library"
           className="inline-flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-5 py-3 hover:opacity-90 transition"
         >
           <Library className="w-5 h-5"/>
@@ -103,7 +103,7 @@ export default function UploadSuccess({
         </Link>
 
         <Link
-          href="/chat"
+          href="/dashboard/chat"
           className="inline-flex items-center gap-2 rounded-xl border px-5 py-3 hover:bg-muted transition"
         >
           <MessageSquare className="w-5 h-5"/>

@@ -47,7 +47,7 @@ export default function DashboardHeader() {
           </div>
 
           <Link
-            href="/upload"
+            href="/dashboard/upload"
             className="flex items-center gap-3 rounded-2xl bg-white text-indigo-700 px-7 py-4 font-semibold shadow-lg hover:scale-105 transition"
           >
             <Upload size={22}/>

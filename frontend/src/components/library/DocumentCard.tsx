@@ -125,7 +125,7 @@ export default function DocumentCard({
       <div className="grid grid-cols-2 gap-3 mt-4">
 
         <Link
-          href="/chat"
+          href="/dashboard/chat"
           className="flex justify-center items-center gap-2 rounded-xl border py-3 hover:bg-muted transition"
         >
           <MessageSquare className="w-4 h-4" />
@@ -133,7 +133,7 @@ export default function DocumentCard({
         </Link>
 
         <Link
-          href="/summary"
+          href="/dashboard/summary"
           className="flex justify-center items-center gap-2 rounded-xl border py-3 hover:bg-muted transition"
         >
           <FileSearch className="w-4 h-4" />
@@ -141,7 +141,7 @@ export default function DocumentCard({
         </Link>
 
         <Link
-          href="/converter"
+          href="/dashboard/converter"
           className="flex justify-center items-center gap-2 rounded-xl border py-3 hover:bg-muted transition"
         >
           <ArrowLeftRight className="w-4 h-4" />
@@ -149,7 +149,7 @@ export default function DocumentCard({
         </Link>
 
         <Link
-          href="/citation"
+          href="/dashboard/citation"
           className="flex justify-center items-center gap-2 rounded-xl border py-3 hover:bg-muted transition"
         >
           <Quote className="w-4 h-4" />

@@ -23,7 +23,7 @@ export default function HomePage() {
           </Link>
 
           <Link
-            href="/upload"
+            href="/dashboard/upload"
             className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
           >
             Upload Paper
@@ -70,7 +70,7 @@ export default function HomePage() {
             </Link>
 
             <Link
-              href="/upload"
+              href="/dashboard/upload"
               className="border border-blue-600 text-blue-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-blue-50 transition"
             >
               📄 Upload Paper

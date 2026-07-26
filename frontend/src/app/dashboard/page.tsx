@@ -134,7 +134,7 @@ export default function DashboardPage() {
             </span>
 
             <Link
-              href="/library"
+              href="/dashboard/library"
               className="flex items-center gap-2 rounded-xl border px-4 py-2 hover:bg-muted transition"
             >
 
@@ -171,7 +171,7 @@ export default function DashboardPage() {
             </p>
 
             <Link
-              href="/upload"
+              href="/dashboard/upload"
               className="inline-flex mt-8 rounded-xl bg-primary text-primary-foreground px-6 py-3 hover:opacity-90 transition"
             >
 
@@ -229,7 +229,7 @@ export default function DashboardPage() {
                     </span>
 
                     <Link
-                      href="/chat"
+                      href="/dashboard/chat"
                       className="rounded-xl border px-4 py-2 hover:bg-muted transition"
                     >
 

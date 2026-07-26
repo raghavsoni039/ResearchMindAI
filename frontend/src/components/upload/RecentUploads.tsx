@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FileText } from "lucide-react";
 import { API_BASE_URL, apiFetch } from "@/lib/api";
@@ -102,17 +103,25 @@ export default function RecentUploads() {
 
               <div className="mt-6 flex gap-2">
 
-                <button className="rounded-xl bg-primary text-primary-foreground px-4 py-2 text-sm">
+                <Link
+                  href="/dashboard/chat"
+                  className="rounded-xl bg-primary text-primary-foreground px-4 py-2 text-sm hover:opacity-90 transition"
+                >
 
                   Chat
 
-                </button>
+                </Link>
 
-                <button className="rounded-xl border px-4 py-2 text-sm">
+                <Link
+                  href="/dashboard/summary"
+                  className="rounded-xl border px-4 py-2 text-sm hover:bg-muted transition"
+                >
 
                   Summary
 
-                </button>
+                </Link>
+
+              </div>
 
               </div>
 

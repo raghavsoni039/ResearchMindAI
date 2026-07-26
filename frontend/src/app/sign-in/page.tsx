@@ -178,11 +178,6 @@ function SignInContent() {
               )}
             </button>
           </form>
-
-          {/* Dev hint */}
-          <p className="text-center text-slate-400 text-xs mt-6">
-            Dev credentials: <span className="font-mono text-indigo-300">admin@researchmind.ai</span> / <span className="font-mono text-indigo-300">admin123</span>
-          </p>
         </div>
       </div>
     </div>
