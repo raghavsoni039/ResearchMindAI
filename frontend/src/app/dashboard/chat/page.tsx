@@ -25,6 +25,13 @@ interface Message {
   sources?: Source[];
 }
 
+function generateUUID(): string {
+  if (typeof window !== "undefined" && window.crypto && typeof window.crypto.randomUUID === "function") {
+    return window.crypto.randomUUID();
+  }
+  return "msg-" + Math.random().toString(36).substring(2, 11) + Date.now().toString(36);
+}
+
 export default function ChatPage() {
 
   const [sessionId, setSessionId] = useState("");
@@ -115,7 +122,7 @@ export default function ChatPage() {
 
           (msg: any, index: number) => ({
 
-            id: msg.id ?? crypto.randomUUID(),
+            id: msg.id ?? generateUUID(),
 
             role: msg.role,
 
@@ -152,7 +159,7 @@ export default function ChatPage() {
 
     const userMessage: Message = {
 
-      id: crypto.randomUUID(),
+      id: generateUUID(),
 
       role: "user",
 
@@ -204,7 +211,7 @@ export default function ChatPage() {
 
       const aiMessage: Message = {
 
-        id: crypto.randomUUID(),
+        id: generateUUID(),
 
         role: "assistant",
 
