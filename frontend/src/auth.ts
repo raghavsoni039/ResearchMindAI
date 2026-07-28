@@ -45,19 +45,31 @@ providers.push(
     credentials: {
       email: { label: "Email", type: "email", placeholder: "you@example.com" },
       password: { label: "Password", type: "password" },
+      name: { label: "Name", type: "text" },
     },
     async authorize(credentials) {
       if (!credentials?.email || !credentials?.password) return null;
 
-      const user = DEMO_USERS.find(
-        (u) =>
-          u.email === credentials.email &&
-          u.password === credentials.password
-      );
+      const rawEmail = String(credentials.email).trim().toLowerCase();
+      const rawPassword = String(credentials.password).trim();
+      const rawName = credentials.name ? String(credentials.name).trim() : "";
 
-      if (!user) return null;
+      if (rawPassword.length < 3) return null;
 
-      return { id: user.id, email: user.email, name: user.name };
+      // Check admin account
+      if (rawEmail === "admin@researchmind.ai" && rawPassword === "admin123") {
+        return { id: "admin-1", email: "admin@researchmind.ai", name: rawName || "Admin User" };
+      }
+
+      // Allow any user to sign up / sign in dynamically
+      const displayName = rawName || rawEmail.split("@")[0] || "Research User";
+      const userId = `user-${rawEmail.replace(/[^a-z0-9]/g, "-")}`;
+
+      return {
+        id: userId,
+        email: rawEmail,
+        name: displayName.charAt(0).toUpperCase() + displayName.slice(1),
+      };
     },
   })
 );
