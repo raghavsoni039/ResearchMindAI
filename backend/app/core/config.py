@@ -44,7 +44,7 @@ class Settings(BaseSettings):
 
     # Comma-separated allowed origins for CORS in production.
     # Example: "https://researchmind.ai,https://www.researchmind.ai"
-    ALLOWED_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000"
+    ALLOWED_ORIGINS: str = "*"
 
     # Auth.js / NextAuth JWT secret — must match AUTH_SECRET in frontend .env.local
     # Used to verify JWTs issued by the Next.js Auth.js session.
