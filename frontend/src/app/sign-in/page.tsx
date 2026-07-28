@@ -86,7 +86,7 @@ function SignInContent() {
 
           {/* OAuth Buttons */}
           <div className="space-y-3 mb-6">
-            <button
+            {/* <button
               id="btn-google-signin"
               onClick={() => handleOAuth("google")}
               disabled={!!loading}
@@ -98,7 +98,7 @@ function SignInContent() {
                 <FcGoogle size={18} />
               )}
               Continue with Google
-            </button>
+            </button> */}
 
             <button
               id="btn-github-signin"

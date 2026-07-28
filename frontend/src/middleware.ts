@@ -1,6 +1,5 @@
 /**
  * Next.js Middleware — Route Protection
- *
  * All /dashboard/** routes require a valid Auth.js session.
  * Unauthenticated requests are redirected to /sign-in.
  * Auth.js API routes (/api/auth/**) are always public.
