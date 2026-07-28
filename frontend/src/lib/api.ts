@@ -14,7 +14,7 @@ import { getSession } from "next-auth/react";
 export function getApiBaseUrl(): string {
   const envUrl = process.env.NEXT_PUBLIC_API_URL;
   
-  if (envUrl && envUrl !== "http://127.0.0.1:8000" && envUrl !== "http://localhost:8000") {
+  if (envUrl) {
     return envUrl.replace(/\/$/, "");
   }
 
@@ -22,7 +22,7 @@ export function getApiBaseUrl(): string {
     return `${window.location.protocol}//${window.location.hostname}:8000`;
   }
 
-  return (envUrl || "http://127.0.0.1:8000").replace(/\/$/, "");
+  return "";
 }
 
 export const API_BASE_URL = getApiBaseUrl();
