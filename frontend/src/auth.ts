@@ -75,6 +75,21 @@ export const authConfig: NextAuthConfig = {
   },
 
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      try {
+        const redirectUrl = new URL(url);
+        const base = new URL(baseUrl);
+        if (redirectUrl.origin === base.origin) return url;
+        if (redirectUrl.hostname === "localhost" || redirectUrl.hostname === "127.0.0.1") {
+          return `${base.origin}${redirectUrl.pathname}${redirectUrl.search}`;
+        }
+      } catch {
+        // Ignore invalid URL
+      }
+      return baseUrl;
+    },
+
     async jwt({ token, user }) {
       if (user) {
         token.userId = user.id ?? token.sub;

@@ -16,17 +16,21 @@ export default auth((req) => {
   const isAuthRoute = nextUrl.pathname.startsWith("/api/auth");
   const isSignIn = nextUrl.pathname === "/sign-in";
 
+  const host = req.headers.get("x-forwarded-host") || req.headers.get("host") || nextUrl.host;
+  const protocol = req.headers.get("x-forwarded-proto") || (nextUrl.protocol.startsWith("http") ? nextUrl.protocol : "http:");
+  const origin = `${protocol.endsWith(":") ? protocol : protocol + ":"}//${host}`;
+
   // Always allow auth routes through
   if (isAuthRoute) return NextResponse.next();
 
   // Redirect authenticated users away from /sign-in
   if (isSignIn && isLoggedIn) {
-    return NextResponse.redirect(new URL("/dashboard", nextUrl));
+    return NextResponse.redirect(new URL("/dashboard", origin));
   }
 
   // Block unauthenticated users from /dashboard
   if (isOnDashboard && !isLoggedIn) {
-    const signInUrl = new URL("/sign-in", nextUrl);
+    const signInUrl = new URL("/sign-in", origin);
     signInUrl.searchParams.set("callbackUrl", nextUrl.pathname);
     return NextResponse.redirect(signInUrl);
   }
