@@ -44,9 +44,10 @@ function SignInContent() {
             ? "Unable to create account. Password must be at least 3 characters."
             : "Invalid email or password. Check credentials or click Create Account."
         );
-      } else if (result?.url) {
+      } else {
         toast.success(mode === "signup" ? "Account created! Welcome to ResearchMind AI." : "Signed in successfully!");
-        window.location.href = result.url;
+        const target = callbackUrl && callbackUrl.startsWith("/") ? callbackUrl : "/dashboard";
+        window.location.href = target;
       }
     } catch {
       setLoading(null);

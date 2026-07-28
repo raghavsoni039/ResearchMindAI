@@ -88,7 +88,7 @@ export const authConfig: NextAuthConfig = {
 
   callbacks: {
     async redirect({ url, baseUrl }) {
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      if (url.startsWith("/")) return url;
       try {
         const redirectUrl = new URL(url);
         const base = new URL(baseUrl);
@@ -96,7 +96,7 @@ export const authConfig: NextAuthConfig = {
       } catch {
         // Ignore invalid URL
       }
-      return baseUrl;
+      return "/dashboard";
     },
 
     async jwt({ token, user }) {
