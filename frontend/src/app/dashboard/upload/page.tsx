@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { API_BASE_URL, apiFetch } from "@/lib/api";
 
@@ -20,6 +20,28 @@ export default function UploadPage() {
   const [progress, setProgress] = useState(0);
 
   const [uploaded, setUploaded] = useState(false);
+
+  const [stats, setStats] = useState({
+    papers: 0,
+    pages: 0,
+    storage_mb: 0,
+  });
+
+  async function loadStats() {
+    try {
+      const response = await apiFetch(`${API_BASE_URL}/dashboard`);
+      if (response.ok) {
+        const data = await response.json();
+        setStats(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    loadStats();
+  }, []);
 
   async function uploadFile() {
 
@@ -74,6 +96,8 @@ export default function UploadPage() {
         setUploaded(true);
 
         toast.success("Research paper uploaded successfully!");
+        
+        loadStats();
 
       } else {
 
@@ -109,7 +133,11 @@ export default function UploadPage() {
 
       {/* Statistics */}
 
-      <UploadStats />
+      <UploadStats 
+        papers={stats.papers} 
+        pages={stats.pages} 
+        storage={stats.storage_mb} 
+      />
 
       {/* Dropzone */}
 

@@ -2,22 +2,28 @@
 
 import { FileText, Database, HardDrive } from "lucide-react";
 
-export default function UploadStats() {
+interface Props {
+  papers: number;
+  pages: number;
+  storage: number;
+}
+
+export default function UploadStats({ papers, pages, storage }: Props) {
 
   const stats = [
     {
-      title: "Today's Uploads",
-      value: "5",
+      title: "Total Uploads",
+      value: papers.toString(),
       icon: FileText,
     },
     {
       title: "Pages Processed",
-      value: "184",
+      value: pages.toString(),
       icon: Database,
     },
     {
       title: "Storage Used",
-      value: "32 MB",
+      value: `${storage} MB`,
       icon: HardDrive,
     },
   ];
