@@ -1,6 +1,5 @@
-from fastapi import UploadFile
-
 from app.services.pdf_service import PDFService
+from fastapi import UploadFile
 
 
 class DocumentService:

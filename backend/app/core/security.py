@@ -12,13 +12,11 @@ Provides:
 
 import re
 from pathlib import Path
-from typing import Optional
-
-from fastapi import HTTPException, Request, Security
-from fastapi.security import APIKeyHeader, HTTPBearer, HTTPAuthorizationCredentials
 
 from app.core.config import settings
 from app.core.logger import logger
+from fastapi import HTTPException, Request, Security
+from fastapi.security import APIKeyHeader
 
 # ---------------------------------------------------------------------------
 # User Identity — extracted from Auth.js session headers

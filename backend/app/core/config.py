@@ -1,11 +1,8 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
-
 class Settings(BaseSettings):
     """
     Application configuration loaded from .env
     """
-
     # =========================
     # Google Gemini
     # =========================
@@ -55,6 +52,4 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         extra="ignore",
     )
-
-
 settings = Settings()

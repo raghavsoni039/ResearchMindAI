@@ -1,9 +1,8 @@
+from app.core.logger import logger
+from app.core.security import get_current_user
+from app.services.dashboard_service import DashboardService
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
-
-from app.services.dashboard_service import DashboardService
-from app.core.security import get_current_user
-from app.core.logger import logger
 
 router = APIRouter(
     prefix="/dashboard",
@@ -26,3 +25,4 @@ async def dashboard(user_id: str = Depends(get_current_user)):
             status_code=500,
             content={"message": "An internal error occurred."},
         )
+    

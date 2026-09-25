@@ -1,13 +1,12 @@
-import uuid
 import shutil
+import uuid
 from pathlib import Path
 
 import fitz
-from fastapi import UploadFile
-
+from app.core.logger import logger
 from app.services.chunk_service import ChunkService
 from app.services.embedding_service import EmbeddingService
-from app.core.logger import logger
+from fastapi import UploadFile
 
 UPLOAD_DIR = Path("app/uploads")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)

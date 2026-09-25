@@ -1,10 +1,10 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
-from app.core.config import settings
-from app.core.security import sanitize_for_prompt
-from app.core.logger import logger
-import json
 import ast
+import json
 
+from app.core.config import settings
+from app.core.logger import logger
+from app.core.security import sanitize_for_prompt
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 # ---------------------------------------------------------------------------
 # System-level security guard — prepended to EVERY LLM call.

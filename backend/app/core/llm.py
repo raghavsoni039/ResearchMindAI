@@ -1,7 +1,6 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
-
 from app.core.config import settings
 from app.core.logger import logger
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 
 def create_llm():

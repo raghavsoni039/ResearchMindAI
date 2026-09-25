@@ -1,14 +1,14 @@
 import os
 from datetime import datetime
 
-from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import inch
 from reportlab.platypus import (
-    SimpleDocTemplate,
     Paragraph,
+    SimpleDocTemplate,
     Spacer,
 )
-from reportlab.lib.units import inch
 
 EXPORT_FOLDER = "exports"
 

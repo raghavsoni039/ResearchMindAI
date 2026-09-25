@@ -1,10 +1,9 @@
 import uuid
 
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
-
 from app.core.config import settings
 from app.core.logger import logger
 from app.rag.vector_store import collection
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
 
 class EmbeddingService:

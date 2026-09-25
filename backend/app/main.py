@@ -1,24 +1,20 @@
-from fastapi import FastAPI, Request
-from fastapi.middleware.cors import CORSMiddleware
-
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
-from slowapi.errors import RateLimitExceeded
-
+from app.api.routes.chat import router as chat_router
+from app.api.routes.citation import router as citation_router
+from app.api.routes.compare import router as compare_router
+from app.api.routes.converter import router as converter_router
+from app.api.routes.dashboard import router as dashboard_router
+from app.api.routes.documents import router as document_router
+from app.api.routes.export import router as export_router
+from app.api.routes.health import router as health_router
+from app.api.routes.summary import router as summary_router
+from app.api.routes.test import router as test_router
 from app.core.config import settings
 from app.core.logger import logger
-
-from app.api.routes.health import router as health_router
-from app.api.routes.test import router as test_router
-from app.api.routes.documents import router as document_router
-from app.api.routes.chat import router as chat_router
-from app.api.routes.dashboard import router as dashboard_router
-from app.api.routes.summary import router as summary_router
-from app.api.routes.compare import router as compare_router
-from app.api.routes.citation import router as citation_router
-from app.api.routes.export import router as export_router
-from app.api.routes.converter import router as converter_router
-
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
 
 # --------------------------
 # Rate Limiter
@@ -33,7 +29,7 @@ limiter = Limiter(key_func=get_remote_address, default_limits=["200/minute"])
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
-    description="Agentic AI Research Assistant",
+    description="Agentic AI Research Assistant powered by Google Gemini and ChromaDB. Upload your documents, ask questions, and get summaries with ease, all while ensuring your data remains private and secure.",
     docs_url="/docs",
     redoc_url="/redoc",
 )
@@ -48,9 +44,7 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 # Origins are loaded from ALLOWED_ORIGINS env var (comma-separated).
 # Default: localhost only. In production set the real domain in .env.
 allowed_origins = [
-    origin.strip()
-    for origin in settings.ALLOWED_ORIGINS.split(",")
-    if origin.strip()
+    origin.strip() for origin in settings.ALLOWED_ORIGINS.split(",") if origin.strip()
 ]
 
 logger.info(f"CORS allowed origins: {allowed_origins}")
@@ -83,11 +77,10 @@ app.include_router(converter_router)
 # Root
 # --------------------------
 
+
 @app.get("/")
 async def root():
 
     logger.info("Root endpoint accessed.")
 
-    return {
-        "message": f"{settings.APP_NAME} Backend Running 🚀"
-    }
+    return {"message": f"{settings.APP_NAME} Backend Running 🚀"}

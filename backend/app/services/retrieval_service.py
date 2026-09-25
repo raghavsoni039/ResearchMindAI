@@ -1,5 +1,5 @@
-from app.services.embedding_service import EmbeddingService
 from app.rag.vector_store import collection
+from app.services.embedding_service import EmbeddingService
 
 
 class RetrievalService:

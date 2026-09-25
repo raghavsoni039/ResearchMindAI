@@ -1,10 +1,9 @@
-from fastapi import APIRouter, Depends
-from fastapi.responses import JSONResponse
-
+from app.core.logger import logger
+from app.core.security import get_current_user
 from app.schemas.summary import SummaryRequest, SummaryResponse
 from app.services.summary_service import SummaryService
-from app.core.security import get_current_user
-from app.core.logger import logger
+from fastapi import APIRouter, Depends
+from fastapi.responses import JSONResponse
 
 router = APIRouter(prefix="/summary", tags=["Summary"])
 

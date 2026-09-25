@@ -1,11 +1,9 @@
+import shutil
 from pathlib import Path
 from uuid import uuid4
-import shutil
-
-from fastapi import HTTPException, UploadFile
 
 from app.core.config import settings
-
+from fastapi import HTTPException, UploadFile
 
 UPLOAD_DIR = Path("app/uploads")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)

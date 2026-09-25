@@ -1,11 +1,10 @@
-from fastapi import APIRouter, Depends, Request
-from fastapi.responses import JSONResponse
-
-from app.schemas.chat import ChatRequest, ChatResponse
-from app.services.chat_service import ChatService
-from app.services.chat_history_service import ChatHistoryService
-from app.core.security import get_current_user, validate_question
 from app.core.logger import logger
+from app.core.security import get_current_user, validate_question
+from app.schemas.chat import ChatRequest, ChatResponse
+from app.services.chat_history_service import ChatHistoryService
+from app.services.chat_service import ChatService
+from fastapi import APIRouter, Depends
+from fastapi.responses import JSONResponse
 
 router = APIRouter(
     prefix="/chat",

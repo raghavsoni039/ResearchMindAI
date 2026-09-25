@@ -1,5 +1,5 @@
-from fastapi import APIRouter
 from app.core.llm import llm
+from fastapi import APIRouter
 
 router = APIRouter(
     prefix="/test",

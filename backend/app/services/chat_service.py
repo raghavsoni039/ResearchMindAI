@@ -1,9 +1,9 @@
 from datetime import datetime
 
+from app.services.chat_history_service import ChatHistoryService
+from app.services.gemini_service import GeminiService
 from app.services.memory_service import MemoryService
 from app.services.retrieval_service import RetrievalService
-from app.services.gemini_service import GeminiService
-from app.services.chat_history_service import ChatHistoryService
 
 
 class ChatService:

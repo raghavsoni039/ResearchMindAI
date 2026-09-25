@@ -1,7 +1,8 @@
 import os
+from datetime import datetime
+
 from docx import Document
 from docx.shared import Pt
-from datetime import datetime
 
 EXPORT_FOLDER = "exports"
 

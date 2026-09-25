@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from app.rag.vector_store import collection
 from app.core.logger import logger
+from app.rag.vector_store import collection
 
 UPLOAD_DIR = Path("app/uploads")
 

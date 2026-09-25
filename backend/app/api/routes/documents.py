@@ -1,13 +1,12 @@
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
-from fastapi.responses import FileResponse, JSONResponse
-
+from app.core.logger import logger
+from app.core.security import get_current_user, sanitize_filename
 from app.schemas.document import DocumentResponse
 from app.services.document_service import DocumentService
 from app.services.library_service import LibraryService
 from app.services.search_service import SearchService
 from app.services.semantic_search_service import SemanticSearchService
-from app.core.security import get_current_user, sanitize_filename
-from app.core.logger import logger
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi.responses import FileResponse, JSONResponse
 
 router = APIRouter(
     prefix="/documents",
