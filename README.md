@@ -751,7 +751,7 @@ Feel free to use, modify and distribute with attribution.
 
 # 👨‍💻 Developer
 
-## Prince Vinayak
+## Prince Vinayak Rohilla
 
 AI Engineer • Full Stack Developer • Machine Learning Enthusiast
 
